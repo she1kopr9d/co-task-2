@@ -1,0 +1,9 @@
+Django==5.2.3
+boto3
+redis
+psycopg2-binary
+djangorestframework
+djoser
+djangorestframework-simplejwt
+pillow
+thumbnail

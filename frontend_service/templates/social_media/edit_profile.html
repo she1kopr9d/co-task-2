@@ -1,0 +1,96 @@
+{% extends "components/base.html" %}
+{% load i18n %}
+{% block content %}
+<div class="container mt-4">
+  <div class="row justify-content-center">
+    <div class="col-lg-8">
+      <div class="card shadow-sm">
+        <div class="card-header bg-white">
+          <h1 class="h4 mb-0">Редактирование профиля</h1>
+        </div>
+        <div class="card-body">
+          <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {% if form.non_field_errors %}
+              <div class="errors">
+                {{ form.non_field_errors }}
+              </div>
+            {% endif %}
+            <div class="row mb-4">
+            <!-- Поля User -->
+            <!-- Обработка общих ошибок -->
+            
+              <div class="col-md-4 text-center">
+                <div class="mb-3">
+                  {% if request.user.profile.avatar %}
+                  <div class="max-width:150px; max-height:150px;">
+                    <img id="avatar-preview" 
+                       src="{{ request.user.profile.avatar.url }}" 
+                       class="img-fluid rounded-circle shadow"
+                       alt="Аватар">
+                  </div>
+                  {% endif %}
+                </div>
+                <div class="mb-3">
+                  <input for="avatar-input" class="btn btn-outline-primary w-100"
+                    id="avatar"
+                    type="file"
+                    name="avatar"
+                    accept="image/*">
+                  </input>
+                </div>
+              </div>
+              <div class="col-md-8">
+                <div class="mb-3">
+                  <label class="form-label">Имя</label>
+                  <input type="text"
+                    class="form-control"
+                    id="first_name"
+                    name="first_name"
+                    value="{{ form.first_name.value|default:'' }}"
+                    placeholder="Ваше имя">
+                </div>
+                <div class="mb-3">
+                  <label class="form-label">Фамилия</label>
+                  <input type="text"
+                    class="form-control"
+                    id="last_name"
+                    name="last_name"
+                    value="{{ form.last_name.value|default:'' }}"
+                    placeholder="Ваша фамилия">
+                </div>
+                <div class="mb-3">
+                  <label class="form-label">Username</label>
+                    <input type="text" 
+                          id="username"
+                          name="username"
+                          value="{{ form.username.value|default:'' }}"
+                          class="form-control {% if form.username.errors %}error-field{% endif %}"
+                          placeholder="Введите логин">
+                    {% for error in form.username.errors %}
+                      <div class="error">{{ error }}</div>
+                    {% endfor %}
+                </div>
+              </div>
+            </div>
+            
+            <div class="mb-3">
+              <label class="form-label">О себе</label>
+              <textarea id="about"
+                        name="about"
+                        class="form-control"
+                        rows="3"
+                        placeholder="Расскажите о себе...">{{ form.about.value|default:'' }}</textarea>
+            </div>
+            
+            <div class="d-flex justify-content-end mt-4">
+              <a href="{% url 'profile' request.user.username %}" class="btn btn-secondary me-2">Отмена</a>
+              <button type="submit" class="btn btn-primary">Сохранить изменения</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,84 @@
+{% extends 'components/base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card shadow-lg">
+                <div class="card-body p-4">
+                    <h2 class="text-center mb-4">{% trans "Регистрация аккаунта" %}</h2>
+                    
+                    {% if error %}
+                    <div class="alert alert-danger">
+                        {% if error.error %}
+                            <p>{{ error.error }}</p>
+                        {% else %}
+                            {% for key, messages in error.items %}
+                                {% for msg in messages %}
+                                    <p>{{ msg }}</p>
+                                {% endfor %}
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                    {% endif %}
+
+                    <form method="post">
+                        {% csrf_token %}
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="first_name" class="form-label">{% trans "Имя" %}</label>
+                                <input type="text" name="first_name" id="first_name" class="form-control" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="last_name" class="form-label">{% trans "Фамилия" %}</label>
+                                <input type="text" name="last_name" id="last_name" class="form-control" required>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="username" class="form-label">{% trans "Имя пользователя" %}</label>
+                            <input type="text" name="username" id="username" class="form-control" required>
+                            <div class="form-text">{% trans "Не более 150 символов. Только буквы, цифры и @/./+/-/_." %}</div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="email" class="form-label">{% trans "Email" %}</label>
+                            <input type="email" name="email" id="email" class="form-control" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="password" class="form-label">{% trans "Пароль" %}</label>
+                            <input type="password" name="password" id="password" class="form-control" required>
+                            <div class="form-text">
+                                <ul>
+                                    <li>{% trans "Не менее 8 символов" %}</li>
+                                    <li>{% trans "Не должен быть похож на имя пользователя" %}</li>
+                                    <li>{% trans "Не должен быть слишком простым" %}</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="password2" class="form-label">{% trans "Подтверждение пароля" %}</label>
+                            <input type="password" name="password2" id="password2" class="form-control" required>
+                        </div>
+
+                        <div class="d-grid mb-3">
+                            <button type="submit" class="btn btn-success btn-lg">{% trans "Зарегистрироваться" %}</button>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="card-footer py-3 border-top-0 bg-transparent">
+                    <div class="text-center">
+                        {% trans "Уже есть аккаунт?" %} <a href="{% url 'auth_ui:login' %}">{% trans "Войдите" %}</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

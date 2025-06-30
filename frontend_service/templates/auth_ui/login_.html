@@ -1,0 +1,27 @@
+{% extends "components/base.html" %}
+{% load static %}
+{% block content %}
+    <h2 class="mb-4">Вход</h2>
+
+    {% if error %}
+        <div class="alert alert-danger">
+            {{ error }}
+        </div>
+    {% endif %}
+
+    <form method="POST">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="username" class="form-label">Имя пользователя</label>
+            <input type="text" class="form-control" name="username" id="username" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="password" class="form-label">Пароль</label>
+            <input type="password" class="form-control" name="password" id="password" required>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Войти</button>
+        <a href="{% url 'auth_ui:register' %}" class="btn btn-link">Нет аккаунта?</a>
+    </form>
+{% endblock %}

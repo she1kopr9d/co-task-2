@@ -1,0 +1,131 @@
+{% extends "components/base.html" %}
+{% load i18n %}
+{% block content %}
+<div class="container mt-4">
+  <!-- Шапка профиля -->
+  <div class="profile-header bg-light p-4 rounded-3 shadow-sm mb-4">
+    <div class="row align-items-center">
+      <div class="col-md-3 text-center">
+        <img src="{{ another_user.profile.avatar.url }}" 
+             class="profile-avatar" alt="Аватар">
+        {% if another_user.username == request.user.username %}
+        <a class="btn btn-outline-primary mt-2 w-100" href="{% url "edit_profile" %}" >{% trans "Редактировать" %}</a>
+        {% else %}
+        {% if is_following %}
+        <a class="btn btn-outline-primary mt-2 w-100" href="{% url "unfollow" another_user.username %}" >{% trans "Отписаться" %}</a>
+        {% else %}
+        <a class="btn btn-outline-primary mt-2 w-100" href="{% url "follow" another_user.username %}" >{% trans "Подписаться" %}</a>
+        {% endif %}
+        <a class="btn btn-outline-primary mt-2 w-100" href="{% url 'chat:chat_with_user' another_user.username %}">{% trans "Написать" %}</a>
+        {% endif %}
+      </div>
+      
+      <div class="col-md-5">
+        <h1 class="display-5 mb-1">{{ another_user.first_name }} {{ another_user.last_name }}</h1>
+        <p class="text-muted mb-2">@{{ another_user.username }}</p>
+        <p class="mb-3">{{ another_user.profile.about }}</p>
+        
+        {% comment %} <div class="d-flex gap-3">
+          <div class="stats-card bg-white p-2 rounded text-center shadow-sm">
+            <div class="text-primary fw-bold">24</div>
+            <div class="text-muted small">Постов</div>
+          </div>
+          <div class="stats-card bg-white p-2 rounded text-center shadow-sm">
+            <div class="text-success fw-bold">142</div>
+            <div class="text-muted small">Подписчиков</div>
+          </div>
+          <div class="stats-card bg-white p-2 rounded text-center shadow-sm">
+            <div class="text-warning fw-bold">38</div>
+            <div class="text-muted small">Подписок</div>
+          </div>
+        </div> {% endcomment %}
+      </div>
+      
+      {% comment %} <div class="col-md-4">
+        <div class="progress-section bg-white p-3 rounded shadow-sm">
+          <h5 class="mb-3">Продуктивность</h5>
+          <div class="mb-2">
+            <div class="d-flex justify-content-between mb-1">
+              <span>Завершенные задачи</span>
+              <span>92%</span>
+            </div>
+            <div class="progress" style="height: 10px;">
+              <div class="progress-bar bg-success" role="progressbar" style="width: 92%"></div>
+            </div>
+          </div>
+          <div class="mb-2">
+            <div class="d-flex justify-content-between mb-1">
+              <span>Своевременность</span>
+              <span>85%</span>
+            </div>
+            <div class="progress" style="height: 10px;">
+              <div class="progress-bar bg-info" role="progressbar" style="width: 85%"></div>
+            </div>
+          </div>
+          <div>
+            <div class="d-flex justify-content-between mb-1">
+              <span>Сложность задач</span>
+              <span>76%</span>
+            </div>
+            <div class="progress" style="height: 10px;">
+              <div class="progress-bar bg-warning" role="progressbar" style="width: 76%"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>{% endcomment %}
+  </div>
+</div>
+<div class="profile-header row gx-5">
+  <div class="col-8">
+    <div class="bg-light p-4 rounded-3 shadow-sm" ></div>
+  </div>
+  <div class="col-4 ps-0">
+    <div class="bg-light p-4 rounded-3 shadow-sm">
+      <p>
+          <a href="{% url 'user_followings' another_user.username %}" class="text-decoration-none">
+              {% trans "Подписки" %}
+          </a>
+      </p>
+
+      {% for following in followings|slice:":3" %}
+          {% include "components/friend_card.html" with friend=following %}
+      {% endfor %}
+    </div>
+    <div class="bg-light p-4 mt-4 rounded-3 shadow-sm">
+      <p>
+          <a href="{% url 'user_followers' another_user.username %}" class="text-decoration-none">
+              {% trans "Подписчики" %}
+          </a>
+      </p>
+
+      {% for follower in followers|slice:":3" %}
+          {% include "components/friend_card.html" with friend=follower %}
+      {% endfor %}
+    </div>
+    <div class="bg-light p-4 mt-4 rounded-3 shadow-sm">
+      <p>
+          <a href="{% url 'user_dictionaries' another_user.username %}" class="text-decoration-none">
+              {% trans "Языковые словари" %}
+          </a>
+      </p>
+
+      {% for dictionary in lang_dictionaries|slice:":3" %}
+          {% include "components/dict_card.html" with dictionary=dictionary %}
+      {% endfor %}
+    </div>
+    <div class="bg-light p-4 mt-4 rounded-3 shadow-sm">
+      <p>
+          <a href="{% url 'user_dictionaries' another_user.username %}" class="text-decoration-none">
+              {% trans "Словари" %}
+          </a>
+      </p>
+
+      {% for dictionary in not_lang_dictionaries|slice:":3" %}
+          {% include "components/dict_card.html" with dictionary=dictionary %}
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+{% endblock %}
