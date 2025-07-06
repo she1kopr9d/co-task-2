@@ -7,3 +7,6 @@ djoser
 djangorestframework-simplejwt
 pillow
 thumbnail
+drf-spectacular
+drf-spectacular-sidecar
+setuptools

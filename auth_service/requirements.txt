@@ -3,3 +3,7 @@ djangorestframework
 djoser
 djangorestframework-simplejwt
 psycopg2-binary
+confluent-kafka
+drf-spectacular
+drf-spectacular-sidecar
+setuptools

@@ -1,6 +1,14 @@
+import os
 import pathlib
 
 from shared.settings import *  # noqa
+
+
+CELERY_BROKER_URL = "redis://redis:6379/1"
+
+CELERY_ACCEPT_CONTENT = ["json"]
+CELERY_TASK_SERIALIZER = "json"
+CELERY_RESULT_BACKEND = "redis://redis:6379/1"
 
 
 BASE_DIR = pathlib.Path(__file__).resolve().parent.parent
@@ -15,9 +23,17 @@ INSTALLED_APPS = [
     # lib
     "rest_framework",
     "rest_framework_simplejwt",
+    "drf_spectacular",
+    "drf_spectacular_sidecar",
     # my
     "profile_app",
 ]
+
+REST_FRAMEWORK.update(
+    {
+        "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+    }
+)
 
 SIMPLE_JWT = {
     "AUTH_HEADER_TYPES": ("Bearer",),
@@ -81,6 +97,8 @@ USE_I18N = True
 
 USE_TZ = True
 
-STATIC_URL = "static/"
+STATIC_URL = "/static/"
+
+STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"

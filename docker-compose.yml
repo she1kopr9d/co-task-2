@@ -28,6 +28,7 @@ services:
     volumes:
       - ./auth_service:/app
       - ./shared:/app/shared
+      - static:/app/static
     ports:
       - "8001:8001"
     command: python manage.py runserver 0.0.0.0:8001
@@ -53,6 +54,7 @@ services:
       - ./media_service:/app
       - ./media_service/media_cache:/app/media_cache
       - ./shared:/app/shared
+      - static:/app/static
     environment:
       - PYTHONPATH=/app:/app/shared
     env_file:
@@ -73,6 +75,7 @@ services:
     volumes:
       - ./social_service:/app
       - ./shared:/app/shared
+      - static:/app/static
     environment:
       - PYTHONPATH=/app:/app/shared
     env_file:
@@ -80,6 +83,23 @@ services:
     depends_on:
       - redis
     restart: always
+    networks:
+      - co_network
+  
+  social-celery:
+    build:
+      context: .
+      dockerfile: ./social_service/Dockerfile
+    command: celery -A social_service worker --loglevel=info
+    volumes:
+      - ./social_service:/app
+      - ./shared:/app/shared
+    depends_on:
+      - redis
+    environment:
+      - PYTHONPATH=/app:/app/shared
+    env_file:
+      - .env
     networks:
       - co_network
 
@@ -96,6 +116,7 @@ services:
       - auth-service
       - social-service
       - media-service
+      - kafka-ui
     restart: always
     networks:
       - co_network
@@ -134,25 +155,47 @@ services:
       - co_network
 
   zookeeper:
-    image: confluentinc/cp-zookeeper:latest
+    image: confluentinc/cp-zookeeper:7.4.0
+    container_name: zookeeper
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - "2181:2181"
     networks:
       - co_network
 
   kafka:
-    image: confluentinc/cp-kafka:latest
-    ports:
-      - "9092:9092"
+    image: confluentinc/cp-kafka:7.4.0
+    container_name: kafka
     depends_on:
       - zookeeper
+    ports:
+      - "9092:9092"
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
       KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    networks:
+      - co_network
+
+  kafka-ui:
+    image: provectuslabs/kafka-ui:latest
+    container_name: kafka-ui
+    environment:
+      - LOG_LEVEL=ERROR
+      - KAFKA_CLUSTERS_0_NAME=local
+      - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka:9092
+      - KAFKA_CLUSTERS_0_ZOOKEEPER=zookeeper:2181
+      - AUTH_TYPE=LOGIN_FORM
+      - SPRING_SECURITY_USER_NAME=shelldev
+      - SPRING_SECURITY_USER_PASSWORD=qwerty.1
+    depends_on:
+      - kafka
     networks:
       - co_network
 

@@ -13,9 +13,19 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "media_cacher",
+    # install
     "rest_framework",
+    "drf_spectacular",
+    "drf_spectacular_sidecar",
+    # own
+    "media_cacher",
 ]
+
+REST_FRAMEWORK.update(
+    {
+        "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+    }
+)
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -73,7 +83,9 @@ USE_I18N = True
 
 USE_TZ = True
 
-STATIC_URL = "static/"
+STATIC_URL = "/static/"
+
+STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 
 MEDIA_ROOT = os.path.join(BASE_DIR, "media_cache")
 MEDIA_URL = "/media/"

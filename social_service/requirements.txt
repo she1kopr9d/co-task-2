@@ -5,3 +5,8 @@ psycopg2-binary
 djangorestframework
 djoser
 djangorestframework-simplejwt
+confluent-kafka
+celery[redis]
+drf-spectacular
+drf-spectacular-sidecar
+setuptools
